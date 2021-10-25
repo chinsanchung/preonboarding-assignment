@@ -1,11 +1,11 @@
-const express = require('express');
-const session = require('express-session');
-const morgan = require('morgan');
-const cookieParser = require('cookie-parser');
-const cors = require('cors');
-const routes = require('./routes');
+import express, { json, urlencoded } from 'express';
+import session from 'express-session';
+import morgan from 'morgan';
+import cookieParser from 'cookie-parser';
+import cors from 'cors';
+import routes from './routes';
 
-module.exports = () => {
+export default () => {
   const App = express();
   const PORT = 5000;
   const COOKIE_SECRET = 'secret';
@@ -14,8 +14,8 @@ module.exports = () => {
     morgan('dev')(req, res, next);
   });
   App.use(cors());
-  App.use(express.json());
-  App.use(express.urlencoded({ extended: false }));
+  App.use(json());
+  App.use(urlencoded({ extended: false }));
   App.use(cookieParser(COOKIE_SECRET));
   App.use(
     session({

@@ -4,11 +4,15 @@
   "description": "[프리온보딩 백엔드 코스의 선발 과제](https://www.wanted.co.kr/events/pre_onboarding_course_4)",
   "main": "index.js",
   "scripts": {
-    "start": "node src/index.js"
+    "start": "nodemon --exec babel-node src/index.js"
   },
   "author": "chinsanchung",
   "license": "ISC",
   "dependencies": {
+    "@babel/cli": "^7.15.7",
+    "@babel/core": "^7.15.8",
+    "@babel/node": "^7.15.8",
+    "@babel/preset-env": "^7.15.8",
     "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
     "express": "^4.17.1",
