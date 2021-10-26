@@ -3,12 +3,16 @@ import session from 'express-session';
 import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
-import routes from './routes';
+import passport from 'passport';
+import routes from '../routes';
+import setPassport from './passport';
 
 export default () => {
   const App = express();
   const PORT = 5000;
   const COOKIE_SECRET = 'secret';
+  // passport 설정
+  setPassport();
   // middlewares
   App.use((req, res, next) => {
     morgan('dev')(req, res, next);
@@ -25,6 +29,8 @@ export default () => {
       cookie: { httpOnly: true, secure: false },
     })
   );
+  App.use(passport.initialize());
+  App.use(passport.session());
 
   // routes
   App.use('/', routes);

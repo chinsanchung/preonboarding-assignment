@@ -1,3 +1,6 @@
-import App from './app';
+import App from './core/app';
+import database from './core/database';
 
-App();
+database().then(() => {
+  App();
+});
