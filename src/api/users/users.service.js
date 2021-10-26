@@ -1,5 +1,6 @@
 import UserModel from '../../models/users.model';
 import bcrypt from 'bcrypt';
+import createError from '../../utils/createError';
 
 export default class UserService {
   constructor() {
@@ -12,14 +13,15 @@ export default class UserService {
   async join({ id, password }) {
     try {
       const newPassword = this.#bcryptPassword(password);
-      const response = await UserModel.create({
+      await UserModel.create({
         id,
         password: newPassword,
       });
-      console.log('response: ', response);
+      // console.log('response: ', response);
       return;
     } catch (error) {
-      console.log('Service Error: ', error);
+      console.log(error);
+      throw createError(500, error?.messgae);
     }
   }
 }
