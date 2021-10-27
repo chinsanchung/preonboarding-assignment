@@ -43,21 +43,26 @@ in-memory database 으로 인해 처음에는 빈 데이터로 시작하기 때�
 
 유저의 회원가입을 담당합니다.
 
-- POST `/users` : body 에 id, password 를 입력하여 계정을 생성합니다.
+- POST `/users` : body 에 id, password 를 입력하여 계정을 생성합니다. => 상태코드 200, "회원 가입을 완료했습니다."라는 응답을 보냅니다.
 
 ### auth
 
 로그인과 로그아웃을 담당합니다.
 
-- POST `/auth/login` : body 에 id, password 를 입력합니다.
-- POST `/auth/logout` : 로그인한 계정을 로그아웃합니다.
+- POST `/auth/login` : body 에 id, password 를 입력해 요청합니다. => "로그인 완료."라는 응답을 보냅니다. 쿠키에 'connect.sid'라는 세션을 생성합니다. 존재하지 않는 아이디일 경우 "회원 가입을 하지 않은 이메일입니다.", 비밀번호가 틀렸을 경우 "비밀번호가 일치하지 않습니다."를 응답으로 보냅니다.
+
+- POST `/auth/logout` : 로그인한 계정을 로그아웃합니다. => "로그아웃을 완료했습니다."라는 응답을 보냅니다. 'connect.sid'라는 세션을 삭제합니다.
 
 ### boards
 
 글에 대한 CRUD 를 담당합니다.
 
-- GET `/boards?page=1` : query 의 page 를 통해 pagination 을 구현했습니다. 현재는 한번에 두 개씩 출력됩니다.
-- GET `/boards/:board_id` : params 의 board_id 를 가진 특정 글을 가져옵니다. 여기서의 board_id 는 mongoDB 의 objectId 를 입력해야 합니다.
-- POST `/boards` : body 에 title, content 를 입력해서 글을 생성합니다. 유저의 objectId 가 필요하기 때문에 미들웨어로 사전에 로그인 여부를 검사합니다.
-- PATCH `/boards/:board_id` : body 에 title, content 을 입력하고, params 의 board_id 로 특정 글을 수정합니다.
-- DELETE `/boards/:board_id` : params 의 board_id 를 가진 글을 삭제합니다.
+- GET `/boards?page=1` : query 의 page 를 통해 pagination 을 구현했습니다. => 배열이 담긴 객체를 응답으로 보냅니다. 배열에는 최대 2개의 글을 담고 있습니다. 쿼리에 페이지를 넣지 않으면 "query로 page를 작성해주세요."을 응답으로 보냅니다.
+
+- GET `/boards/:board_id` : params 의 board_id 를 가진 특정 글을 가져옵니다. 여기서의 board_id 는 mongoDB 의 objectId 를 입력해야 합니다. => 작성한 글 객체를 응답으로 보냅니다. 글에는 `_id`, `user_id`, `title`, `content`, `created_at`, `__v` 가 담겨있습니다. 만약 올바른 형식의 objectId 를 보내지 않으면 "Argument passed in must be a Buffer or string of 12 bytes or a string of 24 hex characters"을, 올바른 아이디지만 글이 없을 경우 "게시글이 없습니다."을 응답으로 보냅니다.
+
+- POST `/boards` : body 에 title, content 를 입력해서 글을 생성합니다. 유저의 objectId 가 필요하기 때문에 미들웨어로 사전에 로그인 여부를 검사합니다. => "new board's objectId: 글의 objectId"라는 응답을 보냅니다. 이 objectId 는 글 조회, 수정, 삭제 시 board_id 라는 파라미터로 활용합니다.
+
+- PATCH `/boards/:board_id` : body 에 title 또는 content 을 입력하고, params 의 board_id 로 특정 글을 수정합니다. => 올바른 board_id 와 정보를 입력하면 "갱신을 완료했습니다."를, 그 외에 존재하지 않는 글일 경우 "글이 존재하지 않습니다."를 응답으로 보냅니다. 만약 올바른 형식의 objectId 를 보내지 않으면 "Argument passed in must be a Buffer or string of 12 bytes or a string of 24 hex characters"를 보냅니다.
+
+- DELETE `/boards/:board_id` : params 의 board_id 를 가진 글을 삭제합니다. => "삭제를 완료했습니다."를 응답으로 보냅니다. 존재하지 않는 글일 경우 "글이 존재하지 않습니다."를 응답으로 보냅니다. 만약 올바른 형식의 objectId 를 보내지 않으면 "Argument passed in must be a Buffer or string of 12 bytes or a string of 24 hex characters"를 보냅니다.
