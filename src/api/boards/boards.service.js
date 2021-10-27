@@ -72,13 +72,13 @@ export default class BoardService {
     }
   }
 
-  async update({ user_id, board_id, title, content }) {
+  async update({ user_id, board_id, query }) {
     try {
       const isEditable = await this.#checkEditability({ board_id, user_id });
       if (isEditable) {
         await BoardModel.updateOne(
           { _id: ObjectId(board_id) },
-          { $set: { title, content } }
+          { $set: { ...query } }
         );
         return;
       }

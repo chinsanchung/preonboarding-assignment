@@ -47,12 +47,11 @@ export default class BoardController {
   async update(req, res) {
     try {
       const user_id = req?.user?._id;
-      const { board_id, title, content } = req.body;
+      const { board_id } = req.params;
       await this.boardService.update({
         user_id,
         board_id,
-        title,
-        content,
+        query: req.body,
       });
       return res.send('갱신을 완료했습니다.');
     } catch (error) {
